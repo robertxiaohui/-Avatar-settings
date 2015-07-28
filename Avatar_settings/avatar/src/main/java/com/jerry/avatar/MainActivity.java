@@ -79,11 +79,13 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //  ll= (LinearLayout) findViewById(R.id.ll);//头像下部区域
         //   ll.getBackground().setAlpha(200);
 
+        //读取本地存放的头像,并且设置头像为本地头像
         Bitmap bitmap = BitmapFactory.decodeFile(photoSavePath+"/head.png");
-        Drawable drawable = new BitmapDrawable(bitmap);
-       // head.setBackgroundDrawable(drawable);
-        head.setImageDrawable(drawable);
-
+        if (bitmap != null) {
+            Drawable drawable = new BitmapDrawable(bitmap);
+            // head.setBackgroundDrawable(drawable);
+            head.setImageDrawable(drawable);
+        }
         head.setOnClickListener(this);
     }
 
