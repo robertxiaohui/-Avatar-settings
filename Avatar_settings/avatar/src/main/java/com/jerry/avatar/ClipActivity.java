@@ -3,6 +3,7 @@ package com.jerry.avatar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,7 +35,7 @@ public class ClipActivity extends Activity{
 
 		path=getIntent().getStringExtra("path");
 		if(TextUtils.isEmpty(path)||!(new File(path).exists())){
-			Toast.makeText(this, "图片加载失败",Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "图片路径加载失败",Toast.LENGTH_SHORT).show();
 			return;
 		}
 		Bitmap bitmap=ImageTools.convertToBitmap(path, 600,600);
@@ -53,7 +54,16 @@ public class ClipActivity extends Activity{
 					@Override
 					public void run() {
 						Bitmap bitmap = mClipImageLayout.clip();
-						String path= Environment.getExternalStorageDirectory()+"/ClipHeadPhoto/cache/"+System.currentTimeMillis()+ ".png";
+						String saveName = System.currentTimeMillis()+ ".png";
+						String path= Environment.getExternalStorageDirectory()+ClipImageLayout.savePath+"/cache/"+saveName;
+
+						// 获取SharedPreferences对象
+						SharedPreferences sp = getSharedPreferences("xiaoluo", Activity.MODE_PRIVATE);
+						// 获取Editor对象
+						SharedPreferences.Editor editor = sp.edit();
+						editor.putString("saveName",saveName);
+						editor.commit();
+
 						ImageTools.savePhotoToSDCard(bitmap,path);
 						loadingDialog.dismiss();
 						Intent intent = new Intent();

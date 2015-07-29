@@ -9,17 +9,22 @@ import android.widget.RelativeLayout;
 
 public class ClipImageLayout extends RelativeLayout {
 
+    public static String savePath = "/xiaoluo";
+
     private ClipZoomImageView mZoomImageView;
     private ClipImageBorderView mClipImageView;
 
     private int mHorizontalPadding = 60;
     private int mVerticalPadding = 120;
 
+    public ClipImageLayout(Context context) {
+        this(context, null);
+    }
     public ClipImageLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mZoomImageView = new ClipZoomImageView(context);
-        mClipImageView = new ClipImageBorderView(context);
+        mZoomImageView = new ClipZoomImageView(context);//选择图片
+        mClipImageView = new ClipImageBorderView(context);//选择框
 
         android.view.ViewGroup.LayoutParams lp = new LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
@@ -64,4 +69,8 @@ public class ClipImageLayout extends RelativeLayout {
         mZoomImageView.setImageBitmap(bitmap);
     }
 
+
+  /*  public interface setAvatarOnClickListener(AvatarOnClickListener listener){
+
+    }*/
 }

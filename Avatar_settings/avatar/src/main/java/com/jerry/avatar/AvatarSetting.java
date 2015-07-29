@@ -1,10 +1,7 @@
 package com.jerry.avatar;
 
-import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +13,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,8 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnClickListener {
-    private static final String TAG = "MainActivity";
+public class AvatarSetting extends ActionBarActivity implements View.OnClickListener {
     private RelativeLayout title_bar;
     private TextView tv_title;
     // private MyScrollView mScrollView;
@@ -69,10 +64,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private void initView() {
 
         layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        File file = new File(Environment.getExternalStorageDirectory(), ClipImageLayout.savePath+"/cache");
+        File file = new File(Environment.getExternalStorageDirectory(), "ClipHeadPhoto/cache");
         if (!file.exists())
             file.mkdirs();
-        photoSavePath=Environment.getExternalStorageDirectory()+ClipImageLayout.savePath+"/cache/";
+        photoSavePath=Environment.getExternalStorageDirectory()+"/ClipHeadPhoto/cache/";
         photoSaveName =System.currentTimeMillis()+ ".png";
 
         title_bar=(RelativeLayout) findViewById(R.id.title_bar);
@@ -84,12 +79,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         //  ll= (LinearLayout) findViewById(R.id.ll);//头像下部区域
         //   ll.getBackground().setAlpha(200);
 
-        // 获取SharedPreferences对象
-        SharedPreferences sp = getSharedPreferences("xiaoluo", Activity.MODE_PRIVATE);
-        String saveName = sp.getString("saveName", "head.png");
-
         //读取本地存放的头像,并且设置头像为本地头像
-        Bitmap bitmap = BitmapFactory.decodeFile(photoSavePath+saveName);
+        Bitmap bitmap = BitmapFactory.decodeFile(photoSavePath+"/head.png");
         if (bitmap != null) {
             Drawable drawable = new BitmapDrawable(bitmap);
             // head.setBackgroundDrawable(drawable);
@@ -107,15 +98,8 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.head:
                 showPopupWindow(head);
-//                selectAvatar(head);
                 break;
         }
-    }
-
-    private void selectAvatar(View parent){
-        Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        openAlbumIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-        startActivityForResult(openAlbumIntent, PHOTOZOOM);
     }
 
     /**
@@ -162,15 +146,9 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             @Override
             public void onClick(View arg0) {
                 popWindow.dismiss();
-                /*Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                //openAlbumIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image*//*");
-                openAlbumIntent.setType("image*//*");
-                startActivityForResult(openAlbumIntent, PHOTOZOOM);*/
-
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent, PHOTOZOOM);
+                Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                openAlbumIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                startActivityForResult(openAlbumIntent, PHOTOZOOM);
             }
         });
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -197,26 +175,19 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                     return;
                 }
                 uri = data.getData();
-                //ContentResolver cr = this.getContentResolver();
-                Log.d(TAG,"uri = "+uri);
-
                 String[] proj = { MediaStore.Images.Media.DATA };
                 Cursor cursor = managedQuery(uri, proj, null, null,null);
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 cursor.moveToFirst();
                 path = cursor.getString(column_index);// 图片在的路径
-                Log.d(TAG,"path = "+path);
-                Log.d(TAG,"proj = "+proj.length);
-
-
-                Intent intent3=new Intent(MainActivity.this, ClipActivity.class);
+                Intent intent3=new Intent(AvatarSetting.this, ClipActivity.class);
                 intent3.putExtra("path", path);
                 startActivityForResult(intent3, IMAGE_COMPLETE);
                 break;
             case PHOTOTAKE://拍照
                 path=photoSavePath+photoSaveName;
                 uri = Uri.fromFile(new File(path));
-                Intent intent2=new Intent(MainActivity.this, ClipActivity.class);
+                Intent intent2=new Intent(AvatarSetting.this, ClipActivity.class);
                 intent2.putExtra("path", path);
                 startActivityForResult(intent2, IMAGE_COMPLETE);
                 break;
